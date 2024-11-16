@@ -594,21 +594,19 @@ class DPOTrainer(Trainer):
         with PartialState().local_main_process_first():
             # Extract the prompt if needed, and apply the chat template if needed
             train_dataset = train_dataset.map(
-                maybe_extract_prompt, desc="Extracting prompt from train dataset"
+                maybe_extract_prompt,
             )
             train_dataset = train_dataset.map(
                 maybe_apply_chat_template,
                 fn_kwargs={"tokenizer": processing_class},
-                desc="Applying chat template to train dataset",
             )
             if eval_dataset is not None:
                 eval_dataset = eval_dataset.map(
-                    maybe_extract_prompt, desc="Extracting prompt from eval dataset"
+                    maybe_extract_prompt,
                 )
                 eval_dataset = eval_dataset.map(
                     maybe_apply_chat_template,
                     fn_kwargs={"tokenizer": processing_class},
-                    desc="Applying chat template to eval dataset",
                 )
 
             # tokenize the dataset, lower writer batch size to avoid OOM (frequent in vision models)
@@ -623,14 +621,12 @@ class DPOTrainer(Trainer):
                 self.tokenize_row if not self.is_vision_model else self.process_row,
                 fn_kwargs=fn_kwargs,
                 writer_batch_size=10,
-                desc="Tokenizing train dataset",
             )
             if eval_dataset is not None:
                 eval_dataset = eval_dataset.map(
                     self.tokenize_row if not self.is_vision_model else self.process_row,
                     fn_kwargs=fn_kwargs,
                     writer_batch_size=10,
-                    desc="Tokenizing eval dataset",
                 )
 
         super().__init__(
