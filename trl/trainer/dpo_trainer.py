@@ -620,13 +620,11 @@ class DPOTrainer(Trainer):
             train_dataset = train_dataset.map(
                 self.tokenize_row if not self.is_vision_model else self.process_row,
                 fn_kwargs=fn_kwargs,
-                writer_batch_size=10,
             )
             if eval_dataset is not None:
                 eval_dataset = eval_dataset.map(
                     self.tokenize_row if not self.is_vision_model else self.process_row,
                     fn_kwargs=fn_kwargs,
-                    writer_batch_size=10,
                 )
 
         super().__init__(
