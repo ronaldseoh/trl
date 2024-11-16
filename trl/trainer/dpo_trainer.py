@@ -594,22 +594,20 @@ class DPOTrainer(Trainer):
         with PartialState().local_main_process_first():
             # Extract the prompt if needed, and apply the chat template if needed
             train_dataset = train_dataset.map(
-                maybe_extract_prompt, num_proc=args.dataset_num_proc, desc="Extracting prompt from train dataset"
+                maybe_extract_prompt, desc="Extracting prompt from train dataset"
             )
             train_dataset = train_dataset.map(
                 maybe_apply_chat_template,
                 fn_kwargs={"tokenizer": processing_class},
-                num_proc=args.dataset_num_proc,
                 desc="Applying chat template to train dataset",
             )
             if eval_dataset is not None:
                 eval_dataset = eval_dataset.map(
-                    maybe_extract_prompt, num_proc=args.dataset_num_proc, desc="Extracting prompt from eval dataset"
+                    maybe_extract_prompt, desc="Extracting prompt from eval dataset"
                 )
                 eval_dataset = eval_dataset.map(
                     maybe_apply_chat_template,
                     fn_kwargs={"tokenizer": processing_class},
-                    num_proc=args.dataset_num_proc,
                     desc="Applying chat template to eval dataset",
                 )
 
@@ -624,7 +622,6 @@ class DPOTrainer(Trainer):
             train_dataset = train_dataset.map(
                 self.tokenize_row if not self.is_vision_model else self.process_row,
                 fn_kwargs=fn_kwargs,
-                num_proc=self.dataset_num_proc,
                 writer_batch_size=10,
                 desc="Tokenizing train dataset",
             )
@@ -632,7 +629,6 @@ class DPOTrainer(Trainer):
                 eval_dataset = eval_dataset.map(
                     self.tokenize_row if not self.is_vision_model else self.process_row,
                     fn_kwargs=fn_kwargs,
-                    num_proc=self.dataset_num_proc,
                     writer_batch_size=10,
                     desc="Tokenizing eval dataset",
                 )
